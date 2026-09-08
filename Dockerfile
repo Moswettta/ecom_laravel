@@ -1,21 +1,15 @@
-FROM richarvey/nginx-php-fpm:3.1.6
+FROM webdevops/php-nginx:8.3
 
-COPY . .
-WORKDIR /var/www/html
+ENV WEB_DOCUMENT_ROOT=/app/public
+ENV WEB_DOCUMENT_INDEX=index.php
+ENV PHP_DISPLAY_ERRORS=1
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
-RUN composer install --no-dev --optimize-autoloader --no-interaction --ignore-platform-reqs --no-scripts \
- && mkdir -p vendor/composer \
- && printf '%s\n' '<?php' > vendor/composer/platform_check.php
+COPY . /app
+WORKDIR /app
 
-ENV SKIP_COMPOSER 1
-ENV WEBROOT /var/www/html/public
-ENV PHP_ERRORS_STDERR 1
-ENV RUN_SCRIPTS 1
-ENV REAL_IP_HEADER 1
-ENV COMPOSER_DISABLE_PLATFORM_CHECK 1
-ENV APP_ENV production
-ENV APP_DEBUG true
-ENV LOG_CHANNEL stderr
-ENV COMPOSER_ALLOW_SUPERUSER 1
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
+ && mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
+ && chmod -R 777 storage bootstrap/cache
 
-CMD ["/start.sh"]
+CMD ["supervisord"]
