@@ -12,4 +12,4 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
  && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
  && chmod -R 777 storage bootstrap/cache
 
-CMD ["supervisord"]
+CMD bash -c "php artisan migrate --force && php artisan db:seed --force; supervisord"
