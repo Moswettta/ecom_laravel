@@ -1,4 +1,4 @@
-FROM webdevops/php-nginx:8.3
+FROM webdevops/php-nginx:8.4
 
 ENV WEB_DOCUMENT_ROOT=/app/public
 ENV WEB_DOCUMENT_INDEX=index.php
@@ -9,7 +9,7 @@ COPY . /app
 WORKDIR /app
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts \
- && mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
+ && mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
  && chmod -R 777 storage bootstrap/cache
 
 CMD ["supervisord"]
